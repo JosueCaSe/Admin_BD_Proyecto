@@ -68,7 +68,7 @@ CREATE TABLE T_Podcasts (
   ID_Podcast NUMBER PRIMARY KEY,
   ID_Artista NUMBER,
   Titulo VARCHAR2(150),
-  Descripcion CLOB,
+  Descripcion VARCHAR2(1000),
   URL VARCHAR2(255),
   Precio NUMBER(10,2),
   FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
