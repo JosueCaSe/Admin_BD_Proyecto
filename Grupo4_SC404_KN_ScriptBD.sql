@@ -16,20 +16,16 @@ Arguello Selva Dylan
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------CREACION DE TABLAS -------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
--- Creacion de secuencia para las tablas (aumentar los Ids atumaticamente de las tablas, menos usuarios y artistas)
+-- Creacion de secuencia para las tablas (aumentar los Ids atumaticamente de las tablas, menos usuarios, artistas y tablas intermedias)
 CREATE SEQUENCE seq_genero START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_album START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_cancion START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_podcast START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_factura START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_factura_detalle START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_facturadet START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_comentario START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_episodio START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_album_genero START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_cancion_genero START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_episodio_genero START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_podcast_genero START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE seq_artista_genero START WITH 1 INCREMENT BY 1;
+
 
 -- Tabla de Géneros
 CREATE TABLE T_Generos (
