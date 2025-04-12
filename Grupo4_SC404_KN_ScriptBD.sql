@@ -71,61 +71,6 @@ ALTER USER SOUNDHUB_ADMIN PROFILE PROFILE_SOUNDHUB_ADMIN;
 ALTER USER SOUNDHUB_USER PROFILE PROFILE_SOUNDHUB_USER;
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------CREACION DE ROLES------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
--- Rol para administradores con todos los privilegios
-CREATE ROLE ROL_SOUNDHUB_ADMIN;
-
--- Permisos completos sobre todas las tablas
-GRANT ALL PRIVILEGES ON T_Generos TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Artistas TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Albumes TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Canciones TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Podcasts TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Episodios TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Usuarios TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Factura TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_FacturaDetalles TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Comentarios TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Albumes_Generos TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Canciones_Generos TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Episodios_Generos TO ROL_SOUNDHUB_ADMIN;
-GRANT ALL PRIVILEGES ON T_Podcast_Generos TO ROL_SOUNDHUB_ADMIN;
-
--- Permiso para crear sesión
-GRANT CREATE SESSION TO ROL_SOUNDHUB_ADMIN;
-
--- Rol para usuarios normales con permisos limitados
-CREATE ROLE ROL_SOUNDHUB_USER;
-
--- Permisos de solo lectura en tablas de catálogo
-GRANT SELECT ON T_Generos TO ROL_SOUNDHUB_USER;
-GRANT SELECT ON T_Artistas TO ROL_SOUNDHUB_USER;
-GRANT SELECT ON T_Albumes TO ROL_SOUNDHUB_USER;
-GRANT SELECT ON T_Canciones TO ROL_SOUNDHUB_USER;
-GRANT SELECT ON T_Podcasts TO ROL_SOUNDHUB_USER;
-GRANT SELECT ON T_Episodios TO ROL_SOUNDHUB_USER;
-
--- Permisos completos en su propia información de usuario
-GRANT SELECT, INSERT, UPDATE ON T_Usuarios TO ROL_SOUNDHUB_USER;
-
--- Permisos limitados en facturación (solo sus propias facturas)
-GRANT SELECT, INSERT ON T_Factura TO ROL_SOUNDHUB_USER;
-GRANT SELECT, INSERT ON T_FacturaDetalles TO ROL_SOUNDHUB_USER;
-
--- Permisos para comentarios
-GRANT SELECT, INSERT, UPDATE, DELETE ON T_Comentarios TO ROL_SOUNDHUB_USER;
-
--- Permiso para crear sesión
-GRANT CREATE SESSION TO ROL_SOUNDHUB_USER;
-
--- Asignar rol de administrador al usuario admin
-GRANT ROL_SOUNDHUB_ADMIN TO SOUNDHUB_ADMIN;
-
--- Asignar rol de usuario normal al usuario estándar
-GRANT ROL_SOUNDHUB_USER TO SOUNDHUB_USER;
-
-/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------CREACION DE TABLESPACES----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 -- Creacion de usuarios del sistema 
@@ -166,7 +111,7 @@ CREATE SEQUENCE seq_factura START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_facturadet START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_comentario START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_episodio START WITH 1 INCREMENT BY 1;
-/
+
 -- Tabla de Géneros
 CREATE TABLE T_Generos (
   ID_Genero NUMBER PRIMARY KEY,
@@ -193,7 +138,7 @@ CREATE TABLE T_Albumes (
   Fecha_Lanzamiento DATE,
   URL VARCHAR2(255),
   Precio NUMBER(10,2),
-  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
+  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -206,8 +151,8 @@ CREATE TABLE T_Canciones (
   Duracion NUMBER(5,2),
   Precio NUMBER(10,2),
   ID_Artista NUMBER,
-  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album),
-  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
+  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -220,7 +165,7 @@ CREATE TABLE T_Podcasts (
   Descripcion VARCHAR2(1000),
   URL VARCHAR2(255),
   Precio NUMBER(10,2),
-  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
+  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -234,8 +179,8 @@ CREATE TABLE T_Episodios (
   Precio NUMBER(10,2),
   URL VARCHAR2(255),
   Titulo VARCHAR2(150),
-  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
-  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
+  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -245,8 +190,8 @@ CREATE TABLE T_Albumes_Generos (
   ID_Album NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Album, ID_Genero),
-  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album),
-  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
+  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -255,8 +200,8 @@ CREATE TABLE T_Canciones_Generos (
   ID_Cancion NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Cancion, ID_Genero),
-  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion),
-  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
+  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -265,8 +210,8 @@ CREATE TABLE T_Episodios_Generos (
   ID_Episodio NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Episodio, ID_Genero),
-  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio),
-  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
+  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -275,8 +220,8 @@ CREATE TABLE T_Podcast_Generos (
   ID_Podcast NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Podcast, ID_Genero),
-  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
-  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
+  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -301,7 +246,7 @@ CREATE TABLE T_Factura (
   Total NUMBER(10,2),
   Metodo_Pago VARCHAR2(50),
   Estado VARCHAR2(20),
-  FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario)
+  FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario) ON DELETE CASCADE
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -317,11 +262,11 @@ CREATE TABLE T_FacturaDetalles (
   Precio_Unitario NUMBER(10,2),
   Cantidad NUMBER,
   Subtotal NUMBER(10,2),
-  FOREIGN KEY (ID_Factura) REFERENCES T_Factura(ID_Factura),
-  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion),
-  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio),
-  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
-  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album)
+  FOREIGN KEY (ID_Factura) REFERENCES T_Factura(ID_Factura) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion) ON DELETE SET NULL,
+  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio) ON DELETE SET NULL,
+  FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast) ON DELETE SET NULL,
+  FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album) ON DELETE SET NULL
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
@@ -335,15 +280,162 @@ CREATE TABLE T_Comentarios (
   Calificacion NUMBER(1), -- del 1 al 5
   Comentario VARCHAR2(500),
   Fecha_Comentario DATE,
-  FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario),
-  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion),
-  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio)
+  FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario) ON DELETE CASCADE,
+  FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion) ON DELETE SET NULL,
+  FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio) ON DELETE SET NULL
 )
 TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------Procedimientos Almacenados------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------CREACION DE PKs------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Crear PK para T_Generos
+ALTER TABLE T_Generos ADD (
+CONSTRAINT T_GENEROS_PK PRIMARY KEY (ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Artistas
+ALTER TABLE T_Artistas ADD (
+CONSTRAINT T_ARTISTAS_PK PRIMARY KEY (ID_Artista)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Albumes
+ALTER TABLE T_Albumes ADD (
+CONSTRAINT T_ALBUMES_PK PRIMARY KEY (ID_Album)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Canciones
+ALTER TABLE T_Canciones ADD (
+CONSTRAINT T_CANCIONES_PK PRIMARY KEY (ID_Cancion)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Podcasts
+ALTER TABLE T_Podcasts ADD (
+CONSTRAINT T_PODCASTS_PK PRIMARY KEY (ID_Podcast)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Episodios
+ALTER TABLE T_Episodios ADD (
+CONSTRAINT T_EPISODIOS_PK PRIMARY KEY (ID_Episodio)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Albumes_Generos
+ALTER TABLE T_Albumes_Generos ADD (
+CONSTRAINT T_ALBUMES_GENEROS_PK PRIMARY KEY (ID_Album, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Canciones_Generos
+ALTER TABLE T_Canciones_Generos ADD (
+CONSTRAINT T_CANCIONES_GENEROS_PK PRIMARY KEY (ID_Cancion, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Episodios_Generos
+ALTER TABLE T_Episodios_Generos ADD (
+CONSTRAINT T_EPISODIOS_GENEROS_PK PRIMARY KEY (ID_Episodio, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Podcast_Generos
+ALTER TABLE T_Podcast_Generos ADD (
+CONSTRAINT T_PODCAST_GENEROS_PK PRIMARY KEY (ID_Podcast, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Usuarios
+ALTER TABLE T_Usuarios ADD (
+CONSTRAINT T_USUARIOS_PK PRIMARY KEY (ID_Usuario)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Factura
+ALTER TABLE T_Factura ADD (
+CONSTRAINT T_FACTURA_PK PRIMARY KEY (ID_Factura)
+ENABLE VALIDATE);
+
+-- Crear PK para T_FacturaDetalles
+ALTER TABLE T_FacturaDetalles ADD (
+CONSTRAINT T_FACTURADETALLES_PK PRIMARY KEY (ID_FacturaDetalle)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Comentarios
+ALTER TABLE T_Comentarios ADD (
+CONSTRAINT T_COMENTARIOS_PK PRIMARY KEY (ID_Comentario)
+ENABLE VALIDATE);
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------CREACION DE INDICES DE PKs--------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+-- Crear Indice para PK de T_Generos
+CREATE UNIQUE INDEX GENEROS_PK ON T_Generos (ID_Genero)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Artistas
+CREATE UNIQUE INDEX ARTISTAS_PK ON T_Artistas (ID_Artista)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Albumes
+CREATE UNIQUE INDEX ALBUMES_PK ON T_Albumes (ID_Album)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Canciones
+CREATE UNIQUE INDEX CANCIONES_PK ON T_Canciones (ID_Cancion)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Podcasts
+CREATE UNIQUE INDEX PODCASTS_PK ON T_Podcasts (ID_Podcast)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Episodios
+CREATE UNIQUE INDEX EPISODIOS_PK ON T_Episodios (ID_Episodio)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Albumes_Generos
+CREATE UNIQUE INDEX ALBUMES_GENEROS_PK ON T_Albumes_Generos (ID_Album, ID_Genero)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Canciones_Generos
+CREATE UNIQUE INDEX CANCIONES_GENEROS_PK ON T_Canciones_Generos (ID_Cancion, ID_Genero)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Episodios_Generos
+CREATE UNIQUE INDEX EPISODIOS_GENEROS_PK ON T_Episodios_Generos (ID_Episodio, ID_Genero)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Podcast_Generos
+CREATE UNIQUE INDEX PODCAST_GENEROS_PK ON T_Podcast_Generos (ID_Podcast, ID_Genero)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Usuarios
+CREATE UNIQUE INDEX USUARIOS_PK ON T_Usuarios (ID_Usuario)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Factura
+CREATE UNIQUE INDEX FACTURA_PK ON T_Factura (ID_Factura)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_FacturaDetalles
+CREATE UNIQUE INDEX FACTURADETALLES_PK ON T_FacturaDetalles (ID_FacturaDetalle)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Crear Indice para PK de T_Comentarios
+CREATE UNIQUE INDEX COMENTARIOS_PK ON T_Comentarios (ID_Comentario)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------PROCEDIMIENTOS ALMACENADOS------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 -- CRUD T_Generos
 -- INSERT_T_GENEROS_SP
@@ -1143,8 +1235,166 @@ BEGIN
   WHERE ID_Podcast = p_ID_Podcast AND ID_Genero = p_ID_Genero;
 END;
 /
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------Insercion de datos--------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------OTROS INDICES------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+-- Índice para búsqueda de usuarios por email
+CREATE UNIQUE INDEX USUARIOS_EMAIL_IDX ON T_Usuarios (Email)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para búsqueda de artistas por nombre
+CREATE INDEX ARTISTAS_NOMBRE_IDX ON T_Artistas (Nombre)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para búsqueda de canciones por título
+CREATE INDEX CANCIONES_TITULO_IDX ON T_Canciones (Titulo)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para facturas por usuario y fecha 
+CREATE INDEX FACTURA_USUARIO_FECHA_IDX ON T_Factura (ID_Usuario, Fecha_Compra)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para comentarios por canción y calificación 
+CREATE INDEX COMENTARIOS_CANCION_CALIF_IDX ON T_Comentarios (ID_Cancion, Calificacion)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para comentarios por episodio y calificación 
+CREATE INDEX COMENTARIOS_EPISODIO_CALIF_IDX ON T_Comentarios (ID_Episodio, Calificacion)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para búsqueda de canciones por artista y duración 
+CREATE INDEX CANCIONES_ARTISTA_DURACION_IDX ON T_Canciones (ID_Artista, Duracion)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+-- Índice para episodios por podcast y duración 
+CREATE INDEX EPISODIOS_PODCAST_DURACION_IDX ON T_Episodios (ID_Podcast, Duracion)
+TABLESPACE TS_SOUNDHUB_INDICES
+INITRANS 10;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------VISTAS----------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+-- Vista artístas y álbumes
+CREATE OR REPLACE VIEW V_Artistas_Albumes AS
+SELECT 
+    a.ID_Artista,
+    a.Nombre_Artistico AS Artista,
+    al.ID_Album,
+    al.Titulo AS Album,
+    al.Fecha_Lanzamiento,
+    COUNT(c.ID_Cancion) AS Cantidad_Canciones
+FROM T_Artistas a
+LEFT JOIN T_Albumes al ON a.ID_Artista = al.ID_Artista
+LEFT JOIN T_Canciones c ON al.ID_Album = c.ID_Album
+GROUP BY a.ID_Artista, a.Nombre_Artistico, al.ID_Album, al.Titulo, al.Fecha_Lanzamiento;
+
+-- Vista canciones populares (con más compras)
+CREATE OR REPLACE VIEW V_Canciones_Populares AS
+SELECT 
+    c.ID_Cancion,
+    c.Titulo AS Cancion,
+    a.Nombre_Artistico AS Artista,
+    COUNT(fd.ID_FacturaDetalle) AS Veces_Comprada
+FROM T_Canciones c
+JOIN T_Artistas a ON c.ID_Artista = a.ID_Artista
+LEFT JOIN T_FacturaDetalles fd ON c.ID_Cancion = fd.ID_Cancion
+GROUP BY c.ID_Cancion, c.Titulo, a.Nombre_Artistico
+ORDER BY Veces_Comprada DESC;
+
+-- Vista de comentarios recientes
+CREATE OR REPLACE VIEW V_Comentarios_Recientes AS
+SELECT 
+    c.ID_Comentario,
+    u.Nombre AS Usuario,
+    COALESCE(cn.Titulo, ep.Titulo) AS Contenido,
+    c.Calificacion,
+    c.Comentario,
+    c.Fecha_Comentario
+FROM T_Comentarios c
+JOIN T_Usuarios u ON c.ID_Usuario = u.ID_Usuario
+LEFT JOIN T_Canciones cn ON c.ID_Cancion = cn.ID_Cancion
+LEFT JOIN T_Episodios ep ON c.ID_Episodio = ep.ID_Episodio
+ORDER BY c.Fecha_Comentario DESC;
+
+-- Vista de compras por mes
+CREATE OR REPLACE VIEW V_Compras_Por_Mes AS
+SELECT 
+    TO_CHAR(f.Fecha_Compra, 'YYYY-MM') AS Mes,
+    COUNT(f.ID_Factura) AS Total_Compras,
+    SUM(f.Total) AS Ingresos_Totales,
+    COUNT(DISTINCT f.ID_Usuario) AS Usuarios_Unicos
+FROM T_Factura f
+GROUP BY TO_CHAR(f.Fecha_Compra, 'YYYY-MM')
+ORDER BY Mes DESC;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------CREACION DE ROLES------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Rol para administradores con todos los privilegios
+CREATE ROLE ROL_SOUNDHUB_ADMIN;
+
+-- Permisos completos sobre todas las tablas
+GRANT ALL PRIVILEGES ON T_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Artistas TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Albumes TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Canciones TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Podcasts TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Episodios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Usuarios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Factura TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_FacturaDetalles TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Comentarios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Albumes_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Canciones_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Episodios_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Podcast_Generos TO ROL_SOUNDHUB_ADMIN;
+
+-- Permisos adicionales para administradores
+GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, 
+      CREATE SEQUENCE, CREATE TRIGGER TO ROL_SOUNDHUB_ADMIN;
+
+-- Rol para usuarios normales con permisos limitados
+CREATE ROLE ROL_SOUNDHUB_USER;
+
+-- Permisos de solo lectura en tablas de catálogo
+GRANT SELECT ON T_Generos TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Artistas TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Albumes TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Canciones TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Podcasts TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Episodios TO ROL_SOUNDHUB_USER;
+
+-- Permisos completos en su propia información de usuario
+GRANT SELECT, INSERT, UPDATE ON T_Usuarios TO ROL_SOUNDHUB_USER;
+
+-- Permisos limitados en facturación (solo sus propias facturas)
+GRANT SELECT, INSERT ON T_Factura TO ROL_SOUNDHUB_USER;
+GRANT SELECT, INSERT ON T_FacturaDetalles TO ROL_SOUNDHUB_USER;
+
+-- Permisos para comentarios
+GRANT SELECT, INSERT, UPDATE, DELETE ON T_Comentarios TO ROL_SOUNDHUB_USER;
+
+-- Permiso para crear sesión
+GRANT CREATE SESSION TO ROL_SOUNDHUB_USER;
+
+-- Asignar rol de administrador al usuario admin
+GRANT ROL_SOUNDHUB_ADMIN TO SOUNDHUB_ADMIN;
+
+-- Asignar rol de usuario normal al usuario estándar
+GRANT ROL_SOUNDHUB_USER TO SOUNDHUB_USER;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------INSERCION DE DATOS--------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 -- Insercion de datos en T_Generos usando procedimiento almacenado
 BEGIN
