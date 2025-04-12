@@ -11,10 +11,151 @@ Arguello Selva Dylan
 */
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------BASE DE DATOS SOUNDHUB------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------CREACION DE TABLAS -------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------CREACION DE USUARIOS------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Creacion de usuarios del sistema 
+//Se crea el usuario SOUNDHUB_ADMIN
+CREATE USER SOUNDHUB_ADMIN IDENTIFIED BY "12345";
+
+//Se crea el usuario SOUNDHUB_USER
+CREATE USER SOUNDHUB_USER IDENTIFIED BY "12345";
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------CREACION DE PERFILES------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+CREATE PROFILE PROFILE_SOUNDHUB_ADMIN LIMIT
+   SESSIONS_PER_USER          UNLIMITED  -- Sesiones concurrentes ilimitadas
+   CPU_PER_SESSION            UNLIMITED
+   CPU_PER_CALL               UNLIMITED
+   CONNECT_TIME               UNLIMITED
+   IDLE_TIME                  30         -- 30 minutos de inactividad
+   LOGICAL_READS_PER_SESSION  UNLIMITED
+   LOGICAL_READS_PER_CALL     UNLIMITED
+   COMPOSITE_LIMIT           UNLIMITED
+   PRIVATE_SGA               UNLIMITED
+   FAILED_LOGIN_ATTEMPTS      5          -- 5 intentos fallidos antes de bloquear
+   PASSWORD_LIFE_TIME        60         -- Cambio de contraseña cada 60 días
+   PASSWORD_REUSE_TIME       30         -- No reutilizar contraseña antes de 30 días
+   PASSWORD_REUSE_MAX        UNLIMITED
+   PASSWORD_LOCK_TIME        1/24       -- Bloqueo por 1 hora después de intentos fallidos
+   PASSWORD_GRACE_TIME       7          -- 7 días de gracia para cambiar contraseña
+
+CREATE PROFILE PROFILE_SOUNDHUB_USER LIMIT
+   SESSIONS_PER_USER          3         -- Máximo 3 sesiones concurrentes
+   CPU_PER_SESSION            UNLIMITED
+   CPU_PER_CALL               3000      -- 3000 unidades de CPU por llamada
+   CONNECT_TIME               480       -- 8 horas máximo de conexión
+   IDLE_TIME                  15        -- 15 minutos de inactividad
+   LOGICAL_READS_PER_SESSION  DEFAULT
+   LOGICAL_READS_PER_CALL     DEFAULT
+   COMPOSITE_LIMIT           DEFAULT
+   PRIVATE_SGA               DEFAULT
+   FAILED_LOGIN_ATTEMPTS      3         -- 3 intentos fallidos antes de bloquear
+   PASSWORD_LIFE_TIME        90         -- Cambio de contraseña cada 90 días
+   PASSWORD_REUSE_TIME       60         -- No reutilizar contraseña antes de 60 días
+   PASSWORD_REUSE_MAX        5         -- No reutilizar las últimas 5 contraseñas
+   PASSWORD_LOCK_TIME        1/24      -- Bloqueo por 1 hora después de intentos fallidos
+   PASSWORD_GRACE_TIME       5         -- 5 días de gracia para cambiar contraseña
+
+-- Asignar perfil de administrador
+ALTER USER SOUNDHUB_ADMIN PROFILE PROFILE_SOUNDHUB_ADMIN;
+
+-- Asignar perfil de usuario normal
+ALTER USER SOUNDHUB_USER PROFILE PROFILE_SOUNDHUB_USER;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------CREACION DE ROLES------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Rol para administradores con todos los privilegios
+CREATE ROLE ROL_SOUNDHUB_ADMIN;
+
+-- Permisos completos sobre todas las tablas
+GRANT ALL PRIVILEGES ON T_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Artistas TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Albumes TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Canciones TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Podcasts TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Episodios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Usuarios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Factura TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_FacturaDetalles TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Comentarios TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Albumes_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Canciones_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Episodios_Generos TO ROL_SOUNDHUB_ADMIN;
+GRANT ALL PRIVILEGES ON T_Podcast_Generos TO ROL_SOUNDHUB_ADMIN;
+
+-- Permiso para crear sesión
+GRANT CREATE SESSION TO ROL_SOUNDHUB_ADMIN;
+
+-- Rol para usuarios normales con permisos limitados
+CREATE ROLE ROL_SOUNDHUB_USER;
+
+-- Permisos de solo lectura en tablas de catálogo
+GRANT SELECT ON T_Generos TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Artistas TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Albumes TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Canciones TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Podcasts TO ROL_SOUNDHUB_USER;
+GRANT SELECT ON T_Episodios TO ROL_SOUNDHUB_USER;
+
+-- Permisos completos en su propia información de usuario
+GRANT SELECT, INSERT, UPDATE ON T_Usuarios TO ROL_SOUNDHUB_USER;
+
+-- Permisos limitados en facturación (solo sus propias facturas)
+GRANT SELECT, INSERT ON T_Factura TO ROL_SOUNDHUB_USER;
+GRANT SELECT, INSERT ON T_FacturaDetalles TO ROL_SOUNDHUB_USER;
+
+-- Permisos para comentarios
+GRANT SELECT, INSERT, UPDATE, DELETE ON T_Comentarios TO ROL_SOUNDHUB_USER;
+
+-- Permiso para crear sesión
+GRANT CREATE SESSION TO ROL_SOUNDHUB_USER;
+
+-- Asignar rol de administrador al usuario admin
+GRANT ROL_SOUNDHUB_ADMIN TO SOUNDHUB_ADMIN;
+
+-- Asignar rol de usuario normal al usuario estándar
+GRANT ROL_SOUNDHUB_USER TO SOUNDHUB_USER;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------CREACION DE TABLESPACES----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Creacion de usuarios del sistema 
+//Tablespace TS_SOUNDHUB_DATOS
+CREATE TABLESPACE TS_SOUNDHUB_DATOS DATAFILE 'D:\ORACLE\ORACLEXE\ORADATA\XE\XEPDB1\TS_SOUNDHUB_DATOS01.DBF'
+SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
+BLOCKSIZE 8K;
+
+//Tablespace TS_SOUNDHUB_INDICES
+CREATE TABLESPACE TS_SOUNDHUB_INDICES DATAFILE 'D:\ORACLE\ORACLEXE\ORADATA\XE\XEPDB1\TS_SOUNDHUB_INDICES01.DBF'
+SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
+BLOCKSIZE 8K;
+
+//Tablespace TS_SOUNDHUB_TEMPORAL
+CREATE TEMPORARY TABLESPACE TS_SOUNDHUB_TEMPORAL 
+TEMPFILE 'D:\ORACLE\ORACLEXE\ORADATA\XE\XEPDB1\TS_SOUNDHUB_TEMPORAL01.TMP' SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
+TABLESPACE GROUP TMP_SOUNDHUB
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M;
+
+//Se le cambia el parametro del tablespace default y temp a los usuarios
+ALTER USER SOUNDHUB_ADMIN DEFAULT TABLESPACE TS_SOUNDHUB_DATOS;
+ALTER USER SOUNDHUB_ADMIN TEMPORARY TABLESPACE TS_SOUNDHUB_TEMPORAL;
+GRANT UNLIMITED TABLESPACE TO SOUNDHUB_ADMIN;
+
+ALTER USER SOUNDHUB_USER DEFAULT TABLESPACE TS_SOUNDHUB_DATOS;
+ALTER USER SOUNDHUB_USER TEMPORARY TABLESPACE TS_SOUNDHUB_TEMPORAL;
+GRANT UNLIMITED TABLESPACE TO SOUNDHUB_USER;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------CREACION DE TABLAS-------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 -- Creacion de secuencia para las tablas (aumentar los Ids atumaticamente de las tablas, menos usuarios, artistas y tablas intermedias)
 CREATE SEQUENCE seq_genero START WITH 1 INCREMENT BY 1;
@@ -30,16 +171,20 @@ CREATE SEQUENCE seq_episodio START WITH 1 INCREMENT BY 1;
 CREATE TABLE T_Generos (
   ID_Genero NUMBER PRIMARY KEY,
   Nombre_Genero VARCHAR2(100)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Artistas
 CREATE TABLE T_Artistas (
   ID_Artista NUMBER PRIMARY KEY,
   Nombre VARCHAR2(100),
   Nombre_Artistico VARCHAR2(100),
   Biografica VARCHAR2(1000)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Álbumes
 CREATE TABLE T_Albumes (
   ID_Album NUMBER PRIMARY KEY,
@@ -49,8 +194,10 @@ CREATE TABLE T_Albumes (
   URL VARCHAR2(255),
   Precio NUMBER(10,2),
   FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Canciones
 CREATE TABLE T_Canciones (
   ID_Cancion NUMBER PRIMARY KEY,
@@ -61,8 +208,10 @@ CREATE TABLE T_Canciones (
   ID_Artista NUMBER,
   FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album),
   FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Podcasts
 CREATE TABLE T_Podcasts (
   ID_Podcast NUMBER PRIMARY KEY,
@@ -72,8 +221,10 @@ CREATE TABLE T_Podcasts (
   URL VARCHAR2(255),
   Precio NUMBER(10,2),
   FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Episodios
 CREATE TABLE T_Episodios (
   ID_Episodio NUMBER PRIMARY KEY,
@@ -85,8 +236,10 @@ CREATE TABLE T_Episodios (
   Titulo VARCHAR2(150),
   FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
   FOREIGN KEY (ID_Artista) REFERENCES T_Artistas(ID_Artista)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tablas intermedias con generos
 CREATE TABLE T_Albumes_Generos (
   ID_Album NUMBER,
@@ -94,32 +247,40 @@ CREATE TABLE T_Albumes_Generos (
   PRIMARY KEY (ID_Album, ID_Genero),
   FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album),
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 CREATE TABLE T_Canciones_Generos (
   ID_Cancion NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Cancion, ID_Genero),
   FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion),
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 CREATE TABLE T_Episodios_Generos (
   ID_Episodio NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Episodio, ID_Genero),
   FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio),
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 CREATE TABLE T_Podcast_Generos (
   ID_Podcast NUMBER,
   ID_Genero NUMBER,
   PRIMARY KEY (ID_Podcast, ID_Genero),
   FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Usuarios
 CREATE TABLE T_Usuarios (
   ID_Usuario NUMBER PRIMARY KEY,
@@ -128,8 +289,10 @@ CREATE TABLE T_Usuarios (
   Contrasena VARCHAR2(100),
   Telefono VARCHAR2(20),
   Fecha_Registro DATE
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Facturas
 CREATE TABLE T_Factura (
   ID_Factura NUMBER PRIMARY KEY,
@@ -139,8 +302,10 @@ CREATE TABLE T_Factura (
   Metodo_Pago VARCHAR2(50),
   Estado VARCHAR2(20),
   FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de detalles de Factura
 CREATE TABLE T_FacturaDetalles (
   ID_FacturaDetalle NUMBER PRIMARY KEY,
@@ -157,8 +322,10 @@ CREATE TABLE T_FacturaDetalles (
   FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio),
   FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast),
   FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 -- Tabla de Comentarios
 CREATE TABLE T_Comentarios (
   ID_Comentario NUMBER PRIMARY KEY,
@@ -171,8 +338,10 @@ CREATE TABLE T_Comentarios (
   FOREIGN KEY (ID_Usuario) REFERENCES T_Usuarios(ID_Usuario),
   FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion),
   FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio)
-);
-/
+)
+TABLESPACE TS_SOUNDHUB_DATOS
+INITRANS 10;
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------Procedimientos Almacenados------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
