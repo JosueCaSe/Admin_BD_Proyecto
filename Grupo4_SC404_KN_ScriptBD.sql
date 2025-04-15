@@ -263,79 +263,6 @@ TABLESPACE TS_SOUNDHUB_DATOS
 INITRANS 10;
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------------CREACION DE PKs------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
--- Crear PK para T_Generos
-ALTER TABLE T_Generos ADD (
-CONSTRAINT T_GENEROS_PK PRIMARY KEY (ID_Genero)
-ENABLE VALIDATE);
-
--- Crear PK para T_Artistas
-ALTER TABLE T_Artistas ADD (
-CONSTRAINT T_ARTISTAS_PK PRIMARY KEY (ID_Artista)
-ENABLE VALIDATE);
-
--- Crear PK para T_Albumes
-ALTER TABLE T_Albumes ADD (
-CONSTRAINT T_ALBUMES_PK PRIMARY KEY (ID_Album)
-ENABLE VALIDATE);
-
--- Crear PK para T_Canciones
-ALTER TABLE T_Canciones ADD (
-CONSTRAINT T_CANCIONES_PK PRIMARY KEY (ID_Cancion)
-ENABLE VALIDATE);
-
--- Crear PK para T_Podcasts
-ALTER TABLE T_Podcasts ADD (
-CONSTRAINT T_PODCASTS_PK PRIMARY KEY (ID_Podcast)
-ENABLE VALIDATE);
-
--- Crear PK para T_Episodios
-ALTER TABLE T_Episodios ADD (
-CONSTRAINT T_EPISODIOS_PK PRIMARY KEY (ID_Episodio)
-ENABLE VALIDATE);
-
--- Crear PK para T_Albumes_Generos
-ALTER TABLE T_Albumes_Generos ADD (
-CONSTRAINT T_ALBUMES_GENEROS_PK PRIMARY KEY (ID_Album, ID_Genero)
-ENABLE VALIDATE);
-
--- Crear PK para T_Canciones_Generos
-ALTER TABLE T_Canciones_Generos ADD (
-CONSTRAINT T_CANCIONES_GENEROS_PK PRIMARY KEY (ID_Cancion, ID_Genero)
-ENABLE VALIDATE);
-
--- Crear PK para T_Episodios_Generos
-ALTER TABLE T_Episodios_Generos ADD (
-CONSTRAINT T_EPISODIOS_GENEROS_PK PRIMARY KEY (ID_Episodio, ID_Genero)
-ENABLE VALIDATE);
-
--- Crear PK para T_Podcast_Generos
-ALTER TABLE T_Podcast_Generos ADD (
-CONSTRAINT T_PODCAST_GENEROS_PK PRIMARY KEY (ID_Podcast, ID_Genero)
-ENABLE VALIDATE);
-
--- Crear PK para T_Usuarios
-ALTER TABLE T_Usuarios ADD (
-CONSTRAINT T_USUARIOS_PK PRIMARY KEY (ID_Usuario)
-ENABLE VALIDATE);
-
--- Crear PK para T_Factura
-ALTER TABLE T_Factura ADD (
-CONSTRAINT T_FACTURA_PK PRIMARY KEY (ID_Factura)
-ENABLE VALIDATE);
-
--- Crear PK para T_FacturaDetalles
-ALTER TABLE T_FacturaDetalles ADD (
-CONSTRAINT T_FACTURADETALLES_PK PRIMARY KEY (ID_FacturaDetalle)
-ENABLE VALIDATE);
-
--- Crear PK para T_Comentarios
-ALTER TABLE T_Comentarios ADD (
-CONSTRAINT T_COMENTARIOS_PK PRIMARY KEY (ID_Comentario)
-ENABLE VALIDATE);
-
-/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------CREACION DE INDICES DE PKs--------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -409,6 +336,79 @@ INITRANS 10;
 CREATE UNIQUE INDEX COMENTARIOS_PK ON T_Comentarios (ID_Comentario)
 TABLESPACE TS_SOUNDHUB_INDICES
 INITRANS 10;
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------CREACION DE PKs------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-- Crear PK para T_Generos
+ALTER TABLE T_Generos ADD (
+CONSTRAINT T_GENEROS_PK PRIMARY KEY (ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Artistas
+ALTER TABLE T_Artistas ADD (
+CONSTRAINT T_ARTISTAS_PK PRIMARY KEY (ID_Artista)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Albumes
+ALTER TABLE T_Albumes ADD (
+CONSTRAINT T_ALBUMES_PK PRIMARY KEY (ID_Album)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Canciones
+ALTER TABLE T_Canciones ADD (
+CONSTRAINT T_CANCIONES_PK PRIMARY KEY (ID_Cancion)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Podcasts
+ALTER TABLE T_Podcasts ADD (
+CONSTRAINT T_PODCASTS_PK PRIMARY KEY (ID_Podcast)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Episodios
+ALTER TABLE T_Episodios ADD (
+CONSTRAINT T_EPISODIOS_PK PRIMARY KEY (ID_Episodio)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Albumes_Generos
+ALTER TABLE T_Albumes_Generos ADD (
+CONSTRAINT T_ALBUMES_GENEROS_PK PRIMARY KEY (ID_Album, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Canciones_Generos
+ALTER TABLE T_Canciones_Generos ADD (
+CONSTRAINT T_CANCIONES_GENEROS_PK PRIMARY KEY (ID_Cancion, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Episodios_Generos
+ALTER TABLE T_Episodios_Generos ADD (
+CONSTRAINT T_EPISODIOS_GENEROS_PK PRIMARY KEY (ID_Episodio, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Podcast_Generos
+ALTER TABLE T_Podcast_Generos ADD (
+CONSTRAINT T_PODCAST_GENEROS_PK PRIMARY KEY (ID_Podcast, ID_Genero)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Usuarios
+ALTER TABLE T_Usuarios ADD (
+CONSTRAINT T_USUARIOS_PK PRIMARY KEY (ID_Usuario)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Factura
+ALTER TABLE T_Factura ADD (
+CONSTRAINT T_FACTURA_PK PRIMARY KEY (ID_Factura)
+ENABLE VALIDATE);
+
+-- Crear PK para T_FacturaDetalles
+ALTER TABLE T_FacturaDetalles ADD (
+CONSTRAINT T_FACTURADETALLES_PK PRIMARY KEY (ID_FacturaDetalle)
+ENABLE VALIDATE);
+
+-- Crear PK para T_Comentarios
+ALTER TABLE T_Comentarios ADD (
+CONSTRAINT T_COMENTARIOS_PK PRIMARY KEY (ID_Comentario)
+ENABLE VALIDATE);
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------CREACION DE FKs-------------------------------------------------------------------------------------------
@@ -511,6 +511,7 @@ ALTER TABLE T_Comentarios ADD (
     
     CONSTRAINT COMENTARIOS_EPISODIOS_FK FOREIGN KEY (ID_Episodio) 
     REFERENCES T_Episodios(ID_Episodio) ON DELETE SET NULL
+)
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------PROCEDIMIENTOS ALMACENADOS------------------------------------------------------------------------------------
@@ -1488,6 +1489,8 @@ BEGIN
   INSERT_T_GENEROS_SP('Jazz');
   INSERT_T_GENEROS_SP('Clasica');
 END;
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'MM-DD-YYYY';
 
 -- Inserccion de datos en T_Artistas
 
