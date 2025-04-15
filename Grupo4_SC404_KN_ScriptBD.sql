@@ -117,7 +117,7 @@ CREATE SEQUENCE seq_episodio START WITH 1 INCREMENT BY 1;
 
 -- Tabla de Géneros
 CREATE TABLE T_Generos (
-  ID_Genero NUMBER ,
+  ID_Genero NUMBER PRIMARY KEY,
   Nombre_Genero VARCHAR2(100)
 )
 TABLESPACE TS_SOUNDHUB_DATOS
@@ -127,7 +127,7 @@ select * from T_Artistas;
 
 -- Tabla de Artistas
 CREATE TABLE T_Artistas (
-  ID_Artista NUMBER ,
+  ID_Artista NUMBER PRIMARY KEY,
   Nombre VARCHAR2(100),
   Nombre_Artistico VARCHAR2(100),
   Biografica VARCHAR2(1000)
@@ -139,7 +139,7 @@ INITRANS 10;
 
 -- Tabla de Álbumes
 CREATE TABLE T_Albumes (
-  ID_Album NUMBER,
+  ID_Album NUMBER PRIMARY KEY,
   ID_Artista NUMBER,
   Titulo VARCHAR2(150),
   Fecha_Lanzamiento DATE,
@@ -152,7 +152,7 @@ INITRANS 10;
 
 -- Tabla de Canciones
 CREATE TABLE T_Canciones (
-  ID_Cancion NUMBER ,
+  ID_Cancion NUMBER PRIMARY KEY,
   ID_Album NUMBER,
   Titulo VARCHAR2(150),
   Duracion NUMBER(5,2),
@@ -166,7 +166,7 @@ INITRANS 10;
 
 -- Tabla de Podcasts
 CREATE TABLE T_Podcasts (
-  ID_Podcast NUMBER ,
+  ID_Podcast NUMBER PRIMARY KEY,
   ID_Artista NUMBER,
   Titulo VARCHAR2(150),
   Descripcion VARCHAR2(1000),
@@ -179,7 +179,7 @@ INITRANS 10;
 
 -- Tabla de Episodios
 CREATE TABLE T_Episodios (
-  ID_Episodio NUMBER ,
+  ID_Episodio NUMBER PRIMARY KEY,
   ID_Podcast NUMBER,
   ID_Artista NUMBER,
   Duracion NUMBER(5,2),
@@ -196,6 +196,7 @@ INITRANS 10;
 CREATE TABLE T_Albumes_Generos (
   ID_Album NUMBER,
   ID_Genero NUMBER,
+  PRIMARY KEY (ID_Album, ID_Genero),
   FOREIGN KEY (ID_Album) REFERENCES T_Albumes(ID_Album) ON DELETE CASCADE,
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
@@ -205,6 +206,7 @@ INITRANS 10;
 CREATE TABLE T_Canciones_Generos (
   ID_Cancion NUMBER,
   ID_Genero NUMBER,
+  PRIMARY KEY (ID_Cancion, ID_Genero),
   FOREIGN KEY (ID_Cancion) REFERENCES T_Canciones(ID_Cancion) ON DELETE CASCADE,
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
@@ -214,6 +216,7 @@ INITRANS 10;
 CREATE TABLE T_Episodios_Generos (
   ID_Episodio NUMBER,
   ID_Genero NUMBER,
+  PRIMARY KEY (ID_Episodio, ID_Genero),
   FOREIGN KEY (ID_Episodio) REFERENCES T_Episodios(ID_Episodio) ON DELETE CASCADE,
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
@@ -223,6 +226,7 @@ INITRANS 10;
 CREATE TABLE T_Podcast_Generos (
   ID_Podcast NUMBER,
   ID_Genero NUMBER,
+  PRIMARY KEY (ID_Podcast, ID_Genero),
   FOREIGN KEY (ID_Podcast) REFERENCES T_Podcasts(ID_Podcast) ON DELETE CASCADE,
   FOREIGN KEY (ID_Genero) REFERENCES T_Generos(ID_Genero) ON DELETE CASCADE
 )
@@ -231,7 +235,7 @@ INITRANS 10;
 
 -- Tabla de Usuarios
 CREATE TABLE T_Usuarios (
-  ID_Usuario NUMBER,
+  ID_Usuario NUMBER PRIMARY KEY,
   Nombre VARCHAR2(100),
   Email VARCHAR2(100) UNIQUE,
   Contrasena VARCHAR2(100),
@@ -243,7 +247,7 @@ INITRANS 10;
 
 -- Tabla de Facturas
 CREATE TABLE T_Factura (
-  ID_Factura NUMBER,
+  ID_Factura NUMBER PRIMARY KEY,
   ID_Usuario NUMBER,
   Fecha_Compra DATE,
   Total NUMBER(10,2),
@@ -256,7 +260,7 @@ INITRANS 10;
 
 -- Tabla de detalles de Factura
 CREATE TABLE T_FacturaDetalles (
-  ID_FacturaDetalle NUMBER,
+  ID_FacturaDetalle NUMBER PRIMARY KEY,
   ID_Factura NUMBER,
   ID_Cancion NUMBER,
   ID_Episodio NUMBER,
@@ -276,7 +280,7 @@ INITRANS 10;
 
 -- Tabla de Comentarios
 CREATE TABLE T_Comentarios (
-  ID_Comentario NUMBER,
+  ID_Comentario NUMBER PRIMARY KEY,
   ID_Usuario NUMBER,
   ID_Cancion NUMBER,
   ID_Episodio NUMBER,
@@ -293,7 +297,7 @@ INITRANS 10;
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------CREACION DE PKs------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
--- Crear PK para T_Generos
+/*-- Crear PK para T_Generos
 ALTER TABLE T_Generos ADD (
 CONSTRAINT T_GENEROS_PK PRIMARY KEY (ID_Genero)
 ENABLE VALIDATE);
@@ -362,6 +366,7 @@ ENABLE VALIDATE);
 ALTER TABLE T_Comentarios ADD (
 CONSTRAINT T_COMENTARIOS_PK PRIMARY KEY (ID_Comentario)
 ENABLE VALIDATE);
+*/
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------CREACION DE INDICES DE PKs--------------------------------------------------------------------------------------
