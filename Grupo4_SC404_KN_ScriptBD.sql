@@ -278,43 +278,43 @@ COMMIT;
 -- Crear Indice para PK de T_Generos
 CREATE UNIQUE INDEX GENEROS_PK ON T_Generos (ID_Genero)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 
 -- Crear Indice para PK de T_Artistas
 CREATE UNIQUE INDEX ARTISTAS_PK ON T_Artistas (ID_Artista)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Albumes
 CREATE UNIQUE INDEX ALBUMES_PK ON T_Albumes (ID_Album)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Canciones
 CREATE UNIQUE INDEX CANCIONES_PK ON T_Canciones (ID_Cancion)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Podcasts
 CREATE UNIQUE INDEX PODCASTS_PK ON T_Podcasts (ID_Podcast)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Episodios
 CREATE UNIQUE INDEX EPISODIOS_PK ON T_Episodios (ID_Episodio)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Albumes_Generos
 CREATE UNIQUE INDEX ALBUMES_GENEROS_PK ON T_Albumes_Generos (ID_Album, ID_Genero)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Canciones_Generos
 CREATE UNIQUE INDEX CANCIONES_GENEROS_PK ON T_Canciones_Generos (ID_Cancion, ID_Genero)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Episodios_Generos
 CREATE UNIQUE INDEX EPISODIOS_GENEROS_PK ON T_Episodios_Generos (ID_Episodio, ID_Genero)
@@ -324,27 +324,27 @@ INITRANS 10;
 -- Crear Indice para PK de T_Podcast_Generos
 CREATE UNIQUE INDEX PODCAST_GENEROS_PK ON T_Podcast_Generos (ID_Podcast, ID_Genero)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Usuarios
 CREATE UNIQUE INDEX USUARIOS_PK ON T_Usuarios (ID_Usuario)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Factura
 CREATE UNIQUE INDEX FACTURA_PK ON T_Factura (ID_Factura)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_FacturaDetalles
 CREATE UNIQUE INDEX FACTURADETALLES_PK ON T_FacturaDetalles (ID_FacturaDetalle)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Crear Indice para PK de T_Comentarios
 CREATE UNIQUE INDEX COMENTARIOS_PK ON T_Comentarios (ID_Comentario)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 COMMIT;
 
@@ -522,7 +522,7 @@ ALTER TABLE T_Comentarios ADD (
     
     CONSTRAINT COMENTARIOS_EPISODIOS_FK FOREIGN KEY (ID_Episodio) 
     REFERENCES T_Episodios(ID_Episodio) ON DELETE SET NULL
-)
+);
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------PROCEDIMIENTOS ALMACENADOS------------------------------------------------------------------------------------
@@ -1333,43 +1333,42 @@ END;
 -- Índice para búsqueda de usuarios por email
 CREATE UNIQUE INDEX USUARIOS_EMAIL_IDX ON T_Usuarios (Email)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
-
+INITRANS 20;
 
 -- Índice para búsqueda de artistas por nombre
 CREATE INDEX ARTISTAS_NOMBRE_IDX ON T_Artistas (Nombre)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para búsqueda de canciones por título
 CREATE INDEX CANCIONES_TITULO_IDX ON T_Canciones (Titulo)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para facturas por usuario y fecha 
 CREATE INDEX FACTURA_USUARIO_FECHA_IDX ON T_Factura (ID_Usuario, Fecha_Compra)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para comentarios por canción y calificación 
 CREATE INDEX COMENTARIOS_CANCION_CALIF_IDX ON T_Comentarios (ID_Cancion, Calificacion)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para comentarios por episodio y calificación 
 CREATE INDEX COMENTARIOS_EPISODIO_CALIF_IDX ON T_Comentarios (ID_Episodio, Calificacion)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para búsqueda de canciones por artista y duración 
 CREATE INDEX CANCIONES_ARTISTA_DURACION_IDX ON T_Canciones (ID_Artista, Duracion)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 -- Índice para episodios por podcast y duración 
 CREATE INDEX EPISODIOS_PODCAST_DURACION_IDX ON T_Episodios (ID_Podcast, Duracion)
 TABLESPACE TS_SOUNDHUB_INDICES
-INITRANS 10;
+INITRANS 20;
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------VISTAS----------------------------------------------------------------------------------------------------
