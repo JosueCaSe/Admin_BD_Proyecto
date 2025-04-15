@@ -46,7 +46,7 @@ CREATE PROFILE PROFILE_SOUNDHUB_ADMIN LIMIT
    PASSWORD_REUSE_TIME       30         -- No reutilizar contraseña antes de 30 días
    PASSWORD_REUSE_MAX        UNLIMITED
    PASSWORD_LOCK_TIME        1/24       -- Bloqueo por 1 hora después de intentos fallidos
-   PASSWORD_GRACE_TIME       7          -- 7 días de gracia para cambiar contraseña
+   PASSWORD_GRACE_TIME       7;         -- 7 días de gracia para cambiar contraseña
 
 CREATE PROFILE PROFILE_SOUNDHUB_USER LIMIT
    SESSIONS_PER_USER          3         -- Máximo 3 sesiones concurrentes
@@ -63,7 +63,7 @@ CREATE PROFILE PROFILE_SOUNDHUB_USER LIMIT
    PASSWORD_REUSE_TIME       60         -- No reutilizar contraseña antes de 60 días
    PASSWORD_REUSE_MAX        5         -- No reutilizar las últimas 5 contraseñas
    PASSWORD_LOCK_TIME        1/24      -- Bloqueo por 1 hora después de intentos fallidos
-   PASSWORD_GRACE_TIME       5         -- 5 días de gracia para cambiar contraseña
+   PASSWORD_GRACE_TIME       5;         -- 5 días de gracia para cambiar contraseña
 
 -- Asignar perfil de administrador
 ALTER USER SOUNDHUB_ADMIN PROFILE PROFILE_SOUNDHUB_ADMIN;
@@ -76,18 +76,18 @@ ALTER USER SOUNDHUB_USER PROFILE PROFILE_SOUNDHUB_USER;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 -- Creacion de usuarios del sistema 
 //Tablespace TS_SOUNDHUB_DATOS
-CREATE TABLESPACE TS_SOUNDHUB_DATOS DATAFILE 'C:\app\andre\product\21c\oradata\XE\XEPDB1\TS_SOUNDHUB_DATOS01.DBF'
+CREATE TABLESPACE TS_SOUNDHUB_DATOS DATAFILE 'TS_SOUNDHUB_DATOS001.DBF'
 SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
 BLOCKSIZE 8K;
 
 //Tablespace TS_SOUNDHUB_INDICES
-CREATE TABLESPACE TS_SOUNDHUB_INDICES DATAFILE 'C:\app\andre\product\21c\oradata\XE\XEPDB1\TS_SOUNDHUB_INDICES01.DBF'
+CREATE TABLESPACE TS_SOUNDHUB_INDICES DATAFILE 'TS_SOUNDHUB_INDICES001.DBF'
 SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
 BLOCKSIZE 8K;
 
 //Tablespace TS_SOUNDHUB_TEMPORAL
 CREATE TEMPORARY TABLESPACE TS_SOUNDHUB_TEMPORAL 
-TEMPFILE 'C:\app\andre\product\21c\oradata\XE\XEPDB1\TS_SOUNDHUB_TEMPORAL01.TMP' SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
+TEMPFILE 'TS_SOUNDHUB_TEMPORAL001.TMP' SIZE 16M AUTOEXTEND ON NEXT 16M MAXSIZE UNLIMITED
 TABLESPACE GROUP TMP_SOUNDHUB
 EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M;
 
@@ -99,9 +99,6 @@ GRANT UNLIMITED TABLESPACE TO SOUNDHUB_ADMIN;
 ALTER USER SOUNDHUB_USER DEFAULT TABLESPACE TS_SOUNDHUB_DATOS;
 ALTER USER SOUNDHUB_USER TEMPORARY TABLESPACE TS_SOUNDHUB_TEMPORAL;
 GRANT UNLIMITED TABLESPACE TO SOUNDHUB_USER;
-
-
-
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------CREACION DE TABLAS-------------------------------------------------------------------------------------------
